@@ -12,6 +12,12 @@ namespace AwesomeSocialMedia.Users.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
+            return services.AddMediatR();
+        }
+        
+        private static IServiceCollection AddMediatR(this IServiceCollection services)
+        {
+            services.AddMediatR(typeof(ApplicationModule));
             return services;
         }
     }

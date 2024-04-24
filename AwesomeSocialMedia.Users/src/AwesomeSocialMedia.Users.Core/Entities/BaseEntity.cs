@@ -15,7 +15,7 @@
 
         public void Delete()
         {
-            IsDeleted = false;
+            IsDeleted = true;
         }
     }
 }

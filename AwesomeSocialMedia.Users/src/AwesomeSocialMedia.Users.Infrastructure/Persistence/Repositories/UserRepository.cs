@@ -1,5 +1,6 @@
 ﻿using AwesomeSocialMedia.Users.Core.Entities;
 using AwesomeSocialMedia.Users.Core.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace AwesomeSocialMedia.Users.Infrastructure.Persistence.Repositories;
 
@@ -12,22 +13,24 @@ public class UserRepository : IUserRepository
         _usersDbContext = usersDbContext;
     }
 
-    public Task AddAsync(User user)
+    public async Task AddAsync(User user)
     {
-        _usersDbContext.Users.Add(user);
+        await _usersDbContext.Users.AddAsync(user);
 
-        return Task.CompletedTask;
+        await _usersDbContext.SaveChangesAsync();
     }
 
     public Task UpdateAsync(User user)
     {
-        return Task.CompletedTask;
+        _usersDbContext.Update(user);
+
+        return _usersDbContext.SaveChangesAsync();
     }
 
-    public Task<User> GetByIdAsync(Guid id)
+    public async Task<User?> GetByIdAsync(Guid id)
     {
-        var user = _usersDbContext.Users.SingleOrDefault(x => x.Id == id);
+        var user = await _usersDbContext.Users.SingleOrDefaultAsync(x => x.Id == id);
 
-        return Task.FromResult(user);
+        return user;
     }
 }

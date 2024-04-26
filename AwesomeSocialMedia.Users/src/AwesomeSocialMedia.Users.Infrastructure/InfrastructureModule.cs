@@ -11,14 +11,19 @@ namespace AwesomeSocialMedia.Users.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
+            string connectionString = configuration.GetConnectionString("AwesomeSocialMediaCs");
+            
             return services
-                .AddDb("")
+                .AddDb(connectionString)
                 .AddRepositories();
         }
 
         private static IServiceCollection AddDb(this IServiceCollection services, string connectionString)
         {
-            services.AddSingleton<UsersDbContext>();
+            services.AddDbContext<UsersDbContext>(options =>
+            {
+                options.UseSqlServer(connectionString);
+            });
             
             return services;
         }

@@ -2,16 +2,19 @@
 using AwesomeSocialMedia.Posts.Application.InputModels;
 using AwesomeSocialMedia.Posts.Application.ViewModels;
 using AwesomeSocialMedia.Posts.Core.Repositories;
+using AwesomeSocialMedia.Posts.Infrastructure.EventBus;
 
 namespace AwesomeSocialMedia.Posts.Application.Services
 {
 	public class PostService : IPostService
 	{
 		private readonly IPostRepository _repository;
+		private readonly IEventBus _eventBus;
 
-        public PostService(IPostRepository repository)
-		{
-			_repository = repository;
+        public PostService(IPostRepository repository, IEventBus eventBus)
+        {
+	        _repository = repository;
+	        _eventBus = eventBus;
         }
 
 		public async Task<BaseResult<Guid>> Create(CreatePostInputModel model)
@@ -19,6 +22,11 @@ namespace AwesomeSocialMedia.Posts.Application.Services
 			var post = model.ToEntity();
 
 			await _repository.AddAsync(post);
+
+			foreach (var @event in post.Events)	
+			{
+				_eventBus.Publish(@event);
+			}
 
 			return new BaseResult<Guid>(post.Id);
 		}
